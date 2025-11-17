@@ -1,7 +1,7 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 
-export const CreateUser = mutation({
+export const createUser = mutation({
   args: { 
     email: v.string(),
     name: v.string(),
@@ -17,8 +17,8 @@ export const CreateUser = mutation({
         name: args.name,
         credits: 50000,
       };
-      const result = await ctx.db.insert("users", data);
-      console.log(result);
+      
+      await ctx.db.insert("users", data);
       return data;
     }
 

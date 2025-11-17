@@ -1,17 +1,39 @@
-import { useUser } from '@stackframe/stack'
-import React, { useEffect } from 'react'
+"use client";
 
-const AuthProvider = ({children}) => {
-const user=useUser();
-useEffect(() => {
-  console.log(user);
-}, [user]);
+import { useUser } from "@stackframe/stack";
+import { useMutation } from "convex/react";
+import { api } from "../convex/_generated/api";
+import { UserContext } from "./_context/UserContext";
+import React, { useEffect, useState } from "react";
 
-  return (
-    <div>
+const AuthProvider = ({ children }) => {
+  const user = useUser();
+
+  const createUser = useMutation(api.users.createUser);
+  const [userData, setUserData] = useState();
+
+  useEffect(() => {
+    console.log(user);
+    if (user) {
+      createNewUser();
+    }
+  }, [user]);
+
+  const createNewUser = async () => {
+    const result = await createUser({
+      name: user?.displayName,
+      email: user.primaryEmail,
+    });
+
+    console.log(result);
+    setUserData(result);
+  };
+
+  return <div>
+    <UserContext.Provider value={{userData, setUserData}}>
       {children}
-    </div>
-  )
-}
+    </UserContext.Provider>
+  </div>;
+};
 
-export default AuthProvider
+export default AuthProvider;
